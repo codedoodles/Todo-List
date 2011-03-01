@@ -151,15 +151,15 @@
 /*****************************************************************************************************************************************/
 
 $(".add-item-button").live('click', function() {
-    add_item_button($(this).prev('.add-item'));
+    console.log($(this));
+    add_item_button($(this));
     }); /* calls add item function on click */
 
 $(".add-item").live('keydown', function(event){
     if(event.which == 13) {
       event.preventDefault();
-    var store = $(this);
-      $(this).next(".add-item-button").trigger('click', function(store){
-          console.log($(this));
+      $(this).next(".add-item-button").trigger('click', function(){
+          console.log($(this) +"$this keymove");
         add_item_button($(this));
         }
         );
@@ -167,20 +167,23 @@ $(".add-item").live('keydown', function(event){
       });
 
 function add_item_button(this_scoped) { /* validates field value and adds li when true */
-  var input_value = $(".add-item").attr("value");
 
-  if($(this_scoped).val()) {
-      console.log(this_scoped);
-      this_scoped.prevUntil("ul").children(":last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
+  var prev_ul = this_scoped.prevUntil('UL').prev().last();
+  var input_value = prev_ul.nextUntil("input.add-item").next().last().val();
+
+  console.log(input_value);
+  console.log(prev_ul);
+
+
+  if($(input_value)) {
+      prev_ul.children(":last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
     /* $.post("lib/input.php"); */
-    console.log(input_value);
-    $.post("lib/input.php", { list_item: input_value} );
+    $.post("lib/input.php", { list_item: input_value } );
 
     $(".add-item").val("");
     $(".add-item").prev().html("");
     } else {
-      console.log(this_scoped);
         $(".add-item").prev().html("Please Enter a Value");
     }
   }
