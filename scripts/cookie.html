@@ -1,0 +1,30 @@
+<!doctype html>  
+<html lang="en">
+<head>
+  <title></title>
+</head>
+
+<body>
+
+<div>The selected color is <span>Unknown</span></div>
+  
+<div>
+	<input type="button" id="green" value="Green" />
+	<input type="button" id="red" value="Red" />
+</div>
+<script src="jquery.js" type="text/javascript" charset="utf-8"></script>
+<script src="jquery.cookie.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/javascript" charset="utf-8">
+  
+      alert("hello");
+  $("input").live('click', function() {
+      var color = $(this).attr("id");
+      $("span").html(color).css({"color":color});
+  $.cookie('color',color);
+      }
+
+</script>
+
+</body>
+</html>
