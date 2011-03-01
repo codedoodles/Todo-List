@@ -24,7 +24,7 @@
             while($post = $lists_request->fetch_assoc()) {
           ?>
           <ul data-list_id = <?php echo $post['list_id']; ?>>
-            <h1><?php echo $post["list_title"]; ?></h1>
+            <h2><?php echo $post["list_title"]; ?></h2>
 
             <?php
               $list_items_request = $db->query("select li.list_item from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
@@ -38,10 +38,9 @@
             ?>
 
           </ul>
-          <span class="error-span"></span>
-          <input class="add-item" type="text" name="new_list_item" value="">
-
-          <input class="add-item-button" type="button" value="add item">
+            <span class="error-span"></span>
+            <input class="add-item" type="text" name="new_list_item" value="">
+            <input class="add-item-button" type="button" value="add item">
           <?php
           } /* closing the outer loop */
           ?>
@@ -151,7 +150,6 @@
 /*****************************************************************************************************************************************/
 
 $(".add-item-button").live('click', function() {
-    console.log($(this));
     add_item_button($(this));
     }); /* calls add item function on click */
 
@@ -159,7 +157,6 @@ $(".add-item").live('keydown', function(event){
     if(event.which == 13) {
       event.preventDefault();
       $(this).next(".add-item-button").trigger('click', function(){
-          console.log($(this) +"$this keymove");
         add_item_button($(this));
         }
         );
@@ -169,22 +166,21 @@ $(".add-item").live('keydown', function(event){
 function add_item_button(this_scoped) { /* validates field value and adds li when true */
 
   var prev_ul = this_scoped.prevUntil('UL').prev().last();
-  var input_value = prev_ul.nextUntil("input.add-item").next().last().val();
-
-  console.log(input_value);
-  console.log(prev_ul);
+  var input_value = prev_ul.nextUntil(".add-item").next().last().attr("value");
+  var id_container = prev_ul.attr("data-list_id");
 
 
-  if($(input_value)) {
+
+  if(input_value) {
       prev_ul.children(":last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
     /* $.post("lib/input.php"); */
-    $.post("lib/input.php", { list_item: input_value } );
+    $.post("lib/input.php", { list_item: input_value, list_id: id_container } );
 
     $(".add-item").val("");
     $(".add-item").prev().html("");
     } else {
-        $(".add-item").prev().html("Please Enter a Value");
+      prev_ul.next('span').html("Please Enter a Value");
     }
   }
 /*****************************************************************************************************************************************/

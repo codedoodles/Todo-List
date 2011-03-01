@@ -14,6 +14,9 @@ body {
   background-color:#ffffa6;
   font-family: arial;
 }
+h2 {
+  margin-top:15px;
+}
 .wrap-all {
   /* background-color:#01a2a6; */
   width:960px;
@@ -87,8 +90,10 @@ li a {
 }
 .add-item {
   margin-top:20px;
+  width:69%;
 }
 .add-item-button {
+  width:27%;
 }
 .right-wrap {
   float:right;
