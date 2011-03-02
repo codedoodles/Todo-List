@@ -17,6 +17,9 @@ body {
 h2 {
   margin-top:15px;
 }
+.hide-me {
+  display:none;
+}
 .wrap-all {
   /* background-color:#01a2a6; */
   width:960px;
@@ -25,17 +28,21 @@ h2 {
   overflow:hidden;
   padding:20px;
 }
+.left-wrap {
+  float:left;
+}
 .list-wrap {
   border: solid 1px #adde68;
   background-color:#bdf271;
-  float:left;
   padding:20px;
+  margin-bottom:30px;
 }
 
 .list-title {
   font-size:25px;
   border-bottom:1px solid #adde68;
 }
+
 ul {
   width:300px;
   margin-bottom: 10px;
@@ -94,6 +101,11 @@ li a {
 }
 .add-item-button {
   width:27%;
+}
+.create-list-wrap {
+  float:right;
+}
+.add-list-input {
 }
 .right-wrap {
   float:right;

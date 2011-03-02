@@ -16,36 +16,43 @@
 
     <div class="wrap-all">
       <h1 class="logo">The Todo'inator</h1>
+      <div class="left-wrap">
         <div class="list-wrap">
-      <form action="submit" method="post" accept-charset="utf-8">
-          <h1 class="list-title">I don't want ToDo List</h1>
-          <?php 
+          <form action="submit" method="post" accept-charset="utf-8">
+            <h1 class="list-title">I don't want ToDo List</h1>
+            <?php 
 
-            while($post = $lists_request->fetch_assoc()) {
-          ?>
-          <ul data-list_id = <?php echo $post['list_id']; ?>>
-            <h2><?php echo $post["list_title"]; ?></h2>
+              while($post = $lists_request->fetch_assoc()) {
+              ?>
+              <ul data-list_id = <?php echo $post['list_id']; ?>>
+                <h2><?php echo $post["list_title"]; ?></h2>
 
-            <?php
-              $list_items_request = $db->query("select li.list_item from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
-              while($post_item = $list_items_request->fetch_assoc()) {
+                <?php
+                  $list_items_request = $db->query("select li.list_item from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
+                  while($post_item = $list_items_request->fetch_assoc()) {
+                  ?>
+
+
+                  <li><input class="delete-button button-wrap" type="button" value="X"><span class="text-wrap"><?php echo $post_item["list_item"];?></span></li>
+                  <?php
+                  }  /* closing the inner loop */
+                ?>
+
+              </ul>
+              <span class="error-span"></span>
+              <input class="add-item" type="text" name="new_list_item" value="">
+              <input class="add-item-button" type="button" value="add item">
+              <?php
+              } /* closing the outer loop */
             ?>
 
-
-            <li><input class="delete-button button-wrap" type="button" value="X"><span class="text-wrap"><?php echo $post_item["list_item"];?></span></li>
-            <?php
-              }  /* closing the inner loop */
-            ?>
-
-          </ul>
-            <span class="error-span"></span>
-            <input class="add-item" type="text" name="new_list_item" value="">
-            <input class="add-item-button" type="button" value="add item">
-          <?php
-          } /* closing the outer loop */
-          ?>
-
-        </form>
+          </form>
+        </div>
+        <div class="create-list-wrap">
+          <span class="error-span"></span>
+          <input class="hide-me add-list-input" type="text" name="" value="">
+          <input class="add-list-button" type="button" value="Create New List">
+        </div>
       </div>
 
     <div class="right-wrap">
@@ -181,10 +188,10 @@ function add_item_button(this_scoped) { /* validates field value and adds li whe
       prev_ul.next('span').html("Please Enter a Value");
     }
   }
-/*****************************************************************************************************************************************/
-/*****************************************************************************************************************************************/
 
-
+/*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
+/************************************** !!! ADD NEW LIST !!! *******************************************************************************/
+/*****************************************************************************************************************************************/
 
 </script>
 
