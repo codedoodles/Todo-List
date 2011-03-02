@@ -49,9 +49,9 @@
           </form>
         </div>
         <div class="create-list-wrap">
-          <span class="error-span"></span>
           <input class="hide-me add-list-input" type="text" name="" value="">
           <input class="add-list-button" type="button" value="Create New List">
+          <span class="error-span list-title-error"></span>
         </div>
       </div>
 
@@ -192,6 +192,33 @@ function add_item_button(this_scoped) { /* validates field value and adds li whe
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
 /************************************** !!! ADD NEW LIST !!! *******************************************************************************/
 /*****************************************************************************************************************************************/
+
+$('.add-list-button').live('click', function() {
+    var input_box = $(this).prev();
+
+    if($(this).prev().hasClass('hide-me')) {
+        input_box.toggleClass('hide-me');
+        $(this).val('Add List')
+        input_box.focus();
+
+      } else {
+        if(!input_box.val()) {
+            var something = $(this);
+            $('.list-title-error').html('Please enter a title');
+            input_box.focus();
+          } else {
+              input_box.toggleClass('hide-me');
+              input_box.val('');
+              $(this).val('Create New List');
+              $('.list-title-error').html('');
+              $(this).blur();
+    }
+    }
+
+
+
+}); /* end .live */
+
 
 </script>
 
