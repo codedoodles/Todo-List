@@ -38,10 +38,10 @@
                   }  /* closing the inner loop */
                 ?>
 
-              </ul>
               <span class="error-span"></span>
               <input class="add-item" type="text" name="new_list_item" value="">
               <input class="add-item-button" type="button" value="add item">
+              </ul>
               <?php
               } /* closing the outer loop */
             ?>
@@ -197,27 +197,35 @@ $('.add-list-button').live('click', function() {
     var input_box = $(this).prev();
 
     if($(this).prev().hasClass('hide-me')) {
+        /* the input box is not showing */
+
         input_box.toggleClass('hide-me');
         $(this).val('Add List')
         input_box.focus();
 
       } else {
+        /* the input box is showing */
+
         if(!input_box.val()) {
+            /* the input box is not showing */
+
             var something = $(this);
             $('.list-title-error').html('Please enter a title');
             input_box.focus();
           } else {
-              input_box.toggleClass('hide-me');
-              input_box.val('');
-              $(this).val('Create New List');
-              $('.list-title-error').html('');
-              $(this).blur();
+            /* the input box is showing and has a value  */
+
+              input_box.toggleClass('hide-me'); /* hide the input */ 
+              input_box.val('');                /* clear the input value */ 
+              $(this).val('Create New List');   /* chante the value of the button back to original state */
+              $('.list-title-error').html('');  /* clear potential validation error showing */
+              $(this).blur();                   /* remove focus from the input button */ 
     }
-    }
-
-
-
+  }
 }); /* end .live */
+
+function create_new_list() {
+}
 
 
 </script>
