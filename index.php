@@ -169,8 +169,6 @@ function add_item_button(this_scoped) { /* validates field value and adds li whe
   var input_value = prev_ul.nextUntil(".add-item").next().last().attr("value");
   var id_container = prev_ul.attr("data-list_id");
 
-
-
   if(input_value) {
       prev_ul.children(":last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
