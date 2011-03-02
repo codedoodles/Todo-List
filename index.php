@@ -38,9 +38,9 @@
                   }  /* closing the inner loop */
                 ?>
 
-              <span class="error-span"></span>
-              <input class="add-item" type="text" name="new_list_item" value="">
-              <input class="add-item-button" type="button" value="add item">
+                <span class="error-span"></span>
+                <input class="add-item" type="text" name="new_list_item" value="">
+                <input class="add-item-button" type="button" value="add item">
               </ul>
               <?php
               } /* closing the outer loop */
@@ -172,20 +172,22 @@ $(".add-item").live('keydown', function(event){
 
 function add_item_button(this_scoped) { /* validates field value and adds li when true */
 
-  var prev_ul = this_scoped.prevUntil('UL').prev().last();
-  var input_value = prev_ul.nextUntil(".add-item").next().last().attr("value");
+  var prev_ul = this_scoped.parent('ul');
+  var input_value = prev_ul.children(".add-item").attr("value");
   var id_container = prev_ul.attr("data-list_id");
 
   if(input_value) {
-      prev_ul.children(":last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
+      prev_ul.children("li:last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
     /* $.post("lib/input.php"); */
     $.post("lib/input.php", { list_item: input_value, list_id: id_container } );
 
+    /* console.log(prev_ul.children('.add-item :button').blur()); */
     $(".add-item").val("");
     $(".add-item").prev().html("");
     } else {
-      prev_ul.next('span').html("Please Enter a Value");
+      prev_ul.children('.add-item').focus();
+      prev_ul.children('span.error-span').html("Please Enter a Value");
     }
   }
 
