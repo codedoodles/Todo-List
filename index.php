@@ -18,7 +18,7 @@
       <h1 class="logo">The Todo'inator</h1>
       <div class="left-wrap">
         <div class="list-wrap">
-          <form action="submit" method="post" accept-charset="utf-8">
+          <form class="todo-form" action="submit" method="post" accept-charset="utf-8">
             <h1 class="big-title">I don't want ToDo List</h1>
             <?php 
 
@@ -141,10 +141,10 @@
 /*****************************************************************************************************************************************/
 
         /* Create delete button for title on hover */
-        $('.list-title').mouseenter(function(){
+        $('.list-title').live('mouseenter', function(){
           $(this).append('<input class="delete-button button-wrap" type="button" value="X">');
 
-        }).mouseleave(function() {
+        }).live('mouseleave', function() {
           $(this).children('input').remove();
 
         });
@@ -251,7 +251,14 @@ function create_new_list(new_list_title) {
 
     $.post("lib/input_title.php", { list_title: new_list_title });
 
-    $('form ul:last').after('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
+    if($('form.todo-form ul').length > 0  ) {
+        console.log('true');
+      $('form.todo-form ul:last').after('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
+  } else {
+    console.log('false');
+    $('form.todo-form').append('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
+
+}
 }
 
 
