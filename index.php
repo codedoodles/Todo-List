@@ -248,17 +248,19 @@ $('.add-list-button').live('click', function() {
 
 function create_new_list(new_list_title) {
 
+    var new_list_title = new_list_title;
 
-    $.post("lib/input_title.php", { list_title: new_list_title });
+    $.post("lib/input_title.php", { list_title: new_list_title }, function(the_id) {
 
     if($('form.todo-form ul').length > 0  ) {
-        console.log('true');
-      $('form.todo-form ul:last').after('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
+        
+        $('form.todo-form ul:last').after('<ul data-list_id = "'+the_id+'"><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
   } else {
-    console.log('false');
-    $('form.todo-form').append('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
+    $('form.todo-form').append('<ul data-list_id = "'+the_id+'"><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
 
 }
+
+    });
 }
 
 
