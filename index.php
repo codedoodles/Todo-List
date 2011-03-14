@@ -19,13 +19,13 @@
       <div class="left-wrap">
         <div class="list-wrap">
           <form action="submit" method="post" accept-charset="utf-8">
-            <h1 class="list-title">I don't want ToDo List</h1>
+            <h1 class="big-title">I don't want ToDo List</h1>
             <?php 
 
               while($post = $lists_request->fetch_assoc()) {
               ?>
               <ul data-list_id = <?php echo $post['list_id']; ?>>
-                <h2><?php echo $post["list_title"]; ?></h2>
+                <h2 class="list-title"><?php echo $post["list_title"]; ?></h2>
 
                 <?php
                   $list_items_request = $db->query("select li.list_item from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
@@ -140,20 +140,39 @@
 /************************************** !!! Delete Item!!! *******************************************************************************/
 /*****************************************************************************************************************************************/
 
+        /* Create delete button for title on hover */
+        $('.list-title').mouseenter(function(){
+          $(this).append('<input class="delete-button button-wrap" type="button" value="X">');
+
+        }).mouseleave(function() {
+          $(this).children('input').remove();
+
+        });
+
   $(".delete-button").live('click', delete_button); /* calls the delete function on click */
 
-  function delete_button() { /* deletes parent li of the button */
+  function delete_button() { 
+      if($(this).parent().hasClass('list-title')) { /* check if it is a title or a list item */ 
+        var parent_ul = $(this).parent().parent('ul');
+        var parent_ul_id = parent_ul.attr('data-list_id');
+        console.log(parent_ul_id);
+
+        $.post('lib/delete_title.php', { list_id: parent_ul_id });
+        parent_ul.remove(); /* delete the parent ul to delete a list */ 
+
+      } else {
+
     var delete_this = $(this).next('span').html();
 
-    $.post("lib/delete.php", { list_item: delete_this });
-
+    $.post("lib/delete.php", { list_item: delete_this }); /* delete the parent li to delete a list item  */
     $(this).parents("li").hide();
+    }
 
 
   }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
-/************************************** !!! ADD LIST ITEM !!! *******************************************************************************/
+/************************************** !!! ADD ITEM !!! *******************************************************************************/
 /*****************************************************************************************************************************************/
 
 $(".add-item-button").live('click', function() {
@@ -177,12 +196,10 @@ function add_item_button(this_scoped) { /* validates field value and adds li whe
   var id_container = prev_ul.attr("data-list_id");
 
   if(input_value) {
-      prev_ul.children("li:last").after('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
+        prev_ul.children('span.error-span').before('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
-    /* $.post("lib/input.php"); */
     $.post("lib/input.php", { list_item: input_value, list_id: id_container } );
 
-    /* console.log(prev_ul.children('.add-item :button').blur()); */
     $(".add-item").val("");
     $(".add-item").prev().html("");
     } else {
@@ -216,17 +233,25 @@ $('.add-list-button').live('click', function() {
             input_box.focus();
           } else {
             /* the input box is showing and has a value  */
+            var new_list_title = input_box.val();
 
+            create_new_list(new_list_title);
               input_box.toggleClass('hide-me'); /* hide the input */ 
               input_box.val('');                /* clear the input value */ 
               $(this).val('Create New List');   /* chante the value of the button back to original state */
               $('.list-title-error').html('');  /* clear potential validation error showing */
               $(this).blur();                   /* remove focus from the input button */ 
+
     }
   }
 }); /* end .live */
 
-function create_new_list() {
+function create_new_list(new_list_title) {
+
+
+    $.post("lib/input_title.php", { list_title: new_list_title });
+
+    $('form ul:last').after('<ul><h2 class="list-title">'+new_list_title+'</h2> <span class="error-span"></span> <input class="add-item" type="text" name="new_list_item" value=""> <input class="add-item-button" type="button" value="add item"> </ul>');
 }
 
 
