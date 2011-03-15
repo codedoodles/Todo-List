@@ -28,12 +28,12 @@
                 <h2 class="list-title"><?php echo $post["list_title"]; ?></h2>
 
                 <?php
-                  $list_items_request = $db->query("select li.list_item from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
+                  $list_items_request = $db->query("select li.list_item, li.item_id from list_items li join lists l on l.list_id = li.list_id where li.list_id = '".$post['list_id']."';");
                   while($post_item = $list_items_request->fetch_assoc()) {
                   ?>
 
 
-                  <li><input class="delete-button button-wrap" type="button" value="X"><span class="text-wrap"><?php echo $post_item["list_item"];?></span></li>
+                  <li data-item_id = "<?php echo $post_item["item_id"]; ?>"><input class="delete-button button-wrap" type="button" value="X"><span class="text-wrap"><?php echo $post_item["list_item"];?></span></li>
                   <?php
                   }  /* closing the inner loop */
                 ?>
@@ -81,6 +81,11 @@
 /************************************** !!! Strike and DoubleClick Edit Item!!! *******************************************************************************/
 /*****************************************************************************************************************************************/
 
+  $("ul h2.list-title").live('dblclick', /* Listens for a click on an li */ 
+      function() {
+        edit_item($(this));
+      });
+
   $("li span.text-wrap").live('click', /* Listens for a click on an li */ 
       function() {
         on_click($(this));
@@ -104,26 +109,60 @@
 
   }
   function edit_item(target) {
-    html_content = target.html();
-    var add_edit_button ='<li><input class="add-edit button-wrap" type="button" value="+">';
-    var edit_input_box = '<input class="input-edit" type="text" name="some_name" value="'+html_content+'"></li>';
+      html_content = target.html();
+    if(target.hasClass('list-title')) {
+        console.log(target.html());
+        var add_edit_button ='<input class="add-edit button-wrap" type="button" value="+">';
+        var edit_input_box = '<input class="input-edit" type="text" name="some_name" value="'+html_content+'">';
 
-    target.parent().replaceWith(add_edit_button + edit_input_box);
 
-    $(".add-edit").live('click', function() {
-        close_item();
+        target.replaceWith(add_edit_button + edit_input_box);
+
+        $(".add-edit").live('click', function() {
+            close_title();
+            });
+        $(".input-edit").live({
+
+          focusout: function() {
+            close_title();
+          },
+          keydown: function(event) {
+          if(event.which == 13) {
+          event.preventDefault();
+          close_title()};
+            }
         });
-    $(".input-edit").live({
 
-      focusout: function() {
-        close_item();
-      },
-      keydown: function(event) {
-      if(event.which == 13) {
-      event.preventDefault();
-      close_item()};
-        }
-      });
+      } else {
+          var add_edit_button ='<li><input class="add-edit button-wrap" type="button" value="+">';
+          var edit_input_box = '<input class="input-edit" type="text" name="some_name" value="'+html_content+'"></li>';
+
+          target.parent().replaceWith(add_edit_button + edit_input_box);
+
+          $(".add-edit").live('click', function() {
+              close_item();
+              });
+          $(".input-edit").live({
+
+            focusout: function() {
+              close_item();
+            },
+            keydown: function(event) {
+            if(event.which == 13) {
+            event.preventDefault();
+            close_item()};
+              }
+          });
+      };
+  }
+    function close_title() {
+       var html_new_content = $(".input-edit").val();
+       if(html_new_content < 1){$(".input-edit").parent().remove()};
+       $(".input-edit").replaceWith('<span class="list-item">' + html_new_content + '</span>');
+       $(".add-edit").remove();
+
+
+  }
     function close_item() {
        var html_new_content = $(".input-edit").val();
        if(html_new_content < 1){$(".input-edit").parent().remove()};
@@ -132,7 +171,6 @@
 
        $.post("lib/update.php", { original: html_content, current: html_new_content });
 
-    }
   }
 
 
@@ -144,7 +182,7 @@
         $('.list-title').live('mouseenter', function(){
           $(this).append('<input class="delete-button button-wrap" type="button" value="X">');
 
-        }).live('mouseleave', function() {
+        }).live('mouseleave focusOut click', function() {
           $(this).children('input').remove();
 
         });
@@ -155,17 +193,16 @@
       if($(this).parent().hasClass('list-title')) { /* check if it is a title or a list item */ 
         var parent_ul = $(this).parent().parent('ul');
         var parent_ul_id = parent_ul.attr('data-list_id');
-        console.log(parent_ul_id);
 
         $.post('lib/delete_title.php', { list_id: parent_ul_id });
         parent_ul.remove(); /* delete the parent ul to delete a list */ 
 
       } else {
 
-    var delete_this = $(this).next('span').html();
+        var delete_this = $(this).parent('li').attr('data-item_id');
 
-    $.post("lib/delete.php", { list_item: delete_this }); /* delete the parent li to delete a list item  */
-    $(this).parents("li").hide();
+    $.post("lib/delete.php", { item_id: delete_this }); /* delete the parent li to delete a list item  */
+    $(this).parents("li").remove();
     }
 
 
@@ -196,16 +233,16 @@ function add_item_button(this_scoped) { /* validates field value and adds li whe
   var id_container = prev_ul.attr("data-list_id");
 
   if(input_value) {
-        prev_ul.children('span.error-span').before('<li>'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
-    $.post("lib/input.php", { list_item: input_value, list_id: id_container } );
+      $.post("lib/input.php", { list_item: input_value, list_id: id_container }, function(list_id) { 
+    prev_ul.children('span.error-span').before('<li data-list_id = "'+list_id+'">'+ add_delete_button + li_pre_content + input_value + li_post_content);
 
     $(".add-item").val("");
     $(".add-item").prev().html("");
-    } else {
+});} else {
       prev_ul.children('.add-item').focus();
       prev_ul.children('span.error-span').html("Please Enter a Value");
-    }
+}
   }
 
 /*>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>*/
